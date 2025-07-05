@@ -80,7 +80,7 @@ class AddressBook(UserDict):
 if __name__ == "__main__":
     book = AddressBook()
 
-    john_record = Record("John", birthday="1990-05-15")
+    john_record = Record("John", birthday="1989-01-01")
     john_record.add_phone("1234567890")
     john_record.add_phone("5555555555")
     book.add_record(john_record)
