@@ -8,7 +8,7 @@ AddressBook: Клас для зберігання та управління за
 *new Birthday: Клас для зберігання дня народження. Має валідацію формату (YYYY-MM-DD).
 """
 from collections import UserDict
-from datetime import datetime # Імпорт datetime для роботи з перевіркою дати в класі Birthday
+from datetime import datetime, timedelta  # Імпорт datetime для роботи з перевіркою дати в класі Birthday та timedelta для обчислення днів тижня
 
 class Field:
     def __init__(self, value):
@@ -26,17 +26,16 @@ class Phone(Field):
             raise ValueError("Номер телефону має складатися рівно з 10 цифр.")
         super().__init__(value)
 
-# Додано клас Birthday
-class Birthday(Field):
+class Birthday(Field): # 🔹 Додано клас Birthday
     def __init__(self, value):
         try:
-            datetime.strptime(value, "%Y-%m-%d")
+            datetime.strptime(value, "%Y-%m-%d")  # Формат YYYY-MM-DD
         except ValueError:
-            raise ValueError("Дата народження має бути у форматі YYYY-MM-DD.")
+            raise ValueError("Не вірний формат дати. Дата народження має бути у форматі YYYY-MM-DD.")
         super().__init__(value)
 
 class Record:
-    def __init__(self, name, birthday=None): # Додано параметр birthday в клас Record
+    def __init__(self, name, birthday=None):  # Додано birthday 
         self.name = Name(name)
         self.phones = []
         self.birthday = Birthday(birthday) if birthday else None 
@@ -63,7 +62,7 @@ class Record:
     def __str__(self):
         phones = '; '.join(p.value for p in self.phones)
         bday = f", birthday: {self.birthday.value}" if self.birthday else ""
-        return f"Contact name: {self.name.value}, phones: {phones}{bday}"  
+        return f"Contact name: {self.name.value}, phones: {phones}{bday}"
 
 class AddressBook(UserDict):
     def add_record(self, record):
@@ -76,27 +75,27 @@ class AddressBook(UserDict):
         if name in self.data:
             del self.data[name]
 
-# Приклад використання з днем народження
-if __name__ == "__main__":
-    book = AddressBook()
+    def get_upcoming_birthdays(self): # get_upcoming_birthdays із hw_03
+        today = datetime.today().date()
+        end_date = today + timedelta(days=7)
+        congratulations = {}
 
-    john_record = Record("John", birthday="1989-01-01")
-    john_record.add_phone("1234567890")
-    john_record.add_phone("5555555555")
-    book.add_record(john_record)
+        for record in self.data.values():
+            if record.birthday: 
+                try:
+                    bday = datetime.strptime(record.birthday.value, "%Y-%m-%d").date()
+                except ValueError:
+                    continue  
 
-    jane_record = Record("Jane")
-    jane_record.add_phone("9876543210")
-    book.add_record(jane_record)
+                bday_this_year = bday.replace(year=today.year)
+                if bday_this_year < today:
+                    bday_this_year = bday.replace(year=today.year + 1)
 
-    for name, record in book.data.items():
-        print(record)
+                if today <= bday_this_year <= end_date:
+                    day = bday_this_year.weekday()
+                    if day in [5, 6]:  # Якщо день народження припадає на вихідний (субота або неділя
+                        bday_this_year += timedelta(days=(7 - day))
+                    weekday = bday_this_year.strftime("%A")
+                    congratulations.setdefault(weekday, []).append(record.name.value)
 
-    john = book.find("John")
-    john.edit_phone("1234567890", "1112223333")
-    print(john)
-
-    found_phone = john.find_phone("5555555555")
-    print(f"{john.name}: {found_phone}")
-
-    book.delete("Jane")
+        return congratulations
