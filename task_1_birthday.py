@@ -99,3 +99,31 @@ class AddressBook(UserDict):
                     congratulations.setdefault(weekday, []).append(record.name.value)
 
         return congratulations
+# Приклад використання для перевірки
+if __name__ == "__main__":
+    book = AddressBook()
+
+    john = Record("John", birthday="1991-01-01")
+    jane = Record("Jane", birthday="1992-02-02")
+    kate = Record("Kate", birthday="1993-03-03")
+
+    john.add_phone("1234567890")
+    jane.add_phone("2345678901")
+    kate.add_phone("3456789012")
+
+    book.add_record(john)
+    book.add_record(jane)
+    book.add_record(kate)
+
+# Виведення всіх записів 
+    print("Усі контакти:")
+    for record in book.data.values():
+        print(record)
+
+    print("\nСписок привітань на цьому тижні:")
+    upcoming = book.get_upcoming_birthdays()
+    if upcoming:
+        for day, names in upcoming.items():
+            print(f"{day}: {', '.join(names)}")
+    else:
+        print("Немає днів народження на цьому тижні")
