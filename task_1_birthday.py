@@ -29,9 +29,9 @@ class Phone(Field):
 class Birthday(Field): # 🔹 Додано клас Birthday
     def __init__(self, value):
         try:
-            datetime.strptime(value, "%Y-%m-%d")  # Формат YYYY-MM-DD
+            datetime.strptime(value, "%d.%m.%Y") # Перевірка формату дати
         except ValueError:
-            raise ValueError("Не вірний формат дати. Дата народження має бути у форматі YYYY-MM-DD.")
+            raise ValueError("Не вірний формат дати. Дата народження має бути у форматі DD.MM.YYYY.")
         super().__init__(value)
 
 class Record:
@@ -103,9 +103,9 @@ class AddressBook(UserDict):
 if __name__ == "__main__":
     book = AddressBook()
 
-    john = Record("John", birthday="1991-01-01")
-    jane = Record("Jane", birthday="1992-02-02")
-    kate = Record("Kate", birthday="1993-03-03")
+    john = Record("John", birthday="01.01.1991")
+    jane = Record("Jane", birthday="02.02.1992")
+    kate = Record("Kate", birthday="03.03.1993")
 
     john.add_phone("1234567890")
     jane.add_phone("2345678901")
