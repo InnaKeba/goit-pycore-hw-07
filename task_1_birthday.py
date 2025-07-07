@@ -181,6 +181,7 @@ def birthdays(args, book):
         result.append(f"{day}: {', '.join(names)}")
     return "\n".join(result)
 
+#Основна функція для запуску бота
 def main():
     book = AddressBook()
     print("Welcome to the assistant bot!")
